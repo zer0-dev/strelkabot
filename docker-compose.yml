@@ -3,6 +3,7 @@ services:
     strelkabot:
         container_name: strelkabot
         build:
+            context: .
             dockerfile: Dockerfile
         depends_on:
           - db
