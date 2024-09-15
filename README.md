@@ -8,10 +8,12 @@
 
 Используются VK Callback API и Telegram Bot API.
 ## Запуск в Docker
-1. В файле .env указать переменные: `VK_ACCESS_TOKEN` - access_token сообщества ВК с правами на сообщения, `VK_CONFIRMATION_CODE` - код подтверждения для события confirmation ВК, `VK_SECRET` - секретный ключ, который будет приходить с каждым событием из ВК, `TG_TOKEN` - токен, полученный в Telegram у BotFather, а также переменные для подключения к базе данных (с префиксом `DB_`)
-2. Создать образ контейнера: `docker build -t strelkabot .`
-3. Запустить контейнер (например, на порте 8080): `docker run -d --name strelka -p 8080:8000 strelkabot`
-4. Пробросить порт, чтобы был доступ из Интернета (или, например, запустить туннель ngrok)
-5. Настроить ботов:
+1. Скопировать содержимое файла .env.example в файл .env
+2. В файле docker-compose.yml указать пароль для базы данных, при желании/необходимости изменить порт бота с 8080 на любой другой
+3. В файле .env указать переменные: `VK_ACCESS_TOKEN` - access_token сообщества ВК с правами на сообщения, `VK_CONFIRMATION_CODE` - код подтверждения для события confirmation ВК, `VK_SECRET` - секретный ключ, который будет приходить с каждым событием из ВК, `TG_TOKEN` - токен, полученный в Telegram у BotFather, а в `DB_PASSWORD` - пароль root-пользователя базы данных из docker-compose.yml
+4. Запустить контейнеры: `docker-compose up`
+5. Подключиться к оболочке контейнера strelkabot (`docker exec -it strelkabot sh`) и провести миграции таблиц БД: `php artisan migrate:fresh`
+6. Пробросить порт бота, чтобы был доступ из Интернета (или, например, запустить туннель ngrok)
+7. Настроить ботов:
    - В ВК: в настройках Callback API указать адрес `https://<ip>/strelkabot/vk`, придумать секретный ключ и поставить галочку на событиях типа "Входящее сообщение"
    - В TG: сделать GET-запрос на `https://api.telegram.org/bot<TG_TOKEN>/setWebhook?url=<url>`, где вместо TG_TOKEN указать токен бота, а вместо url - `https://<ip>/strelkabot/tg`
